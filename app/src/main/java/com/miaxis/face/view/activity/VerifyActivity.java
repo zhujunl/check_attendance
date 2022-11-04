@@ -1,0 +1,750 @@
+package com.miaxis.face.view.activity;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.SurfaceTexture;
+import android.graphics.drawable.Drawable;
+import android.hardware.Camera;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.Looper;
+import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.TextureView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+
+
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
+import com.miaxis.face.R;
+import com.miaxis.face.app.App;
+import com.miaxis.face.app.Face_App;
+
+import com.miaxis.face.app.GlideApp;
+import com.miaxis.face.bean.Config;
+import com.miaxis.face.bean.IDCardRecord;
+import com.miaxis.face.bean.Task;
+import com.miaxis.face.bean.Undocumented;
+import com.miaxis.face.manager.AdvertManager;
+import com.miaxis.face.manager.CameraManager;
+import com.miaxis.face.manager.CardManager;
+import com.miaxis.face.manager.ConfigManager;
+import com.miaxis.face.manager.FaceManager;
+import com.miaxis.face.manager.FingerManager;
+import com.miaxis.face.manager.GpioManager;
+import com.miaxis.face.manager.RecordManager;
+import com.miaxis.face.manager.ServerManager;
+import com.miaxis.face.manager.SoundManager;
+import com.miaxis.face.manager.TTSManager;
+import com.miaxis.face.manager.ToastManager;
+import com.miaxis.face.manager.WatchDogManager;
+import com.miaxis.face.presenter.UpdatePresenter;
+import com.miaxis.face.presenter.VerifyPresenter;
+import com.miaxis.face.util.DateUtil;
+import com.miaxis.face.view.custom.AdvertiseDialogFragment;
+import com.miaxis.face.view.custom.RectSurfaceView;
+import com.miaxis.face.view.custom.ResultView;
+import com.miaxis.face.view.fragment.UndocumentedDialogFragment;
+
+
+import org.zz.api.MXFaceInfoEx;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class VerifyActivity extends BaseActivity {
+
+
+
+    @BindView(R.id.tv_title)
+    TextView tvTitle;
+    @BindView(R.id.et_pwd)
+    EditText etPwd;
+    @BindView(R.id.btn_confirm)
+    Button btnConfirm;
+    @BindView(R.id.btn_cancel)
+    Button btnCancel;
+    @BindView(R.id.tv_wel_msg)
+    TextView tvWelMsg;
+    @BindView(R.id.tv_time)
+    TextView tvTime;
+    @BindView(R.id.tv_date)
+    TextView tvDate;
+    @BindView(R.id.ll_top)
+    ConstraintLayout llTop;
+    @BindView(R.id.tv_camera)
+    TextureView tvCamera;
+    @BindView(R.id.rsv_rect)
+    RectSurfaceView rsvRect;
+    @BindView(R.id.fl_camera_root)
+    FrameLayout flCameraRoot;
+    @BindView(R.id.iv_face_box)
+    ImageView ivFaceBox;
+    @BindView(R.id.tv_liveness_hint)
+    TextView tvLivenessHint;
+    @BindView(R.id.tv_pass)
+    TextView tvPass;
+    @BindView(R.id.rv_result)
+    ResultView rvResult;
+    @BindView(R.id.tv_upload_hint)
+    TextView tvUploadHint;
+    @BindView(R.id.iv_gather_finger)
+    ImageView ivGatherFinger;
+    @BindView(R.id.tv_gather_finger_hint)
+    TextView tvGatherFingerHint;
+    @BindView(R.id.rl_gather_finger)
+    RelativeLayout rlGatherFinger;
+
+    private MaterialDialog waitDialog;
+    private MaterialDialog resultDialog;
+
+    private Config config;
+    private VerifyPresenter presenter;
+    private UpdatePresenter updatePresenter;
+
+    private AdvertiseDialogFragment advertiseDialog;
+    private HandlerThread handlerThread;
+    private Handler asyncHandler;
+
+    private volatile boolean advertiseFlag = false;
+    private AtomicInteger advertiseDelay = new AtomicInteger(15);
+    private ReentrantLock advertiseLock = new ReentrantLock();
+
+    private long cameraOpenTime = 0;
+    private boolean first = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.e("Activity:","onCreate");
+        setContentView(R.layout.activity_verify);
+        ButterKnife.bind(this);
+        first=true;
+        initWindow();
+        initDialog();
+        config = ConfigManager.getInstance().getConfig();
+        initData();
+        initView();
+        initTimeReceiver();
+        updatePresenter.checkUpdateSync();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.e("Activity:","onStart");
+        GpioManager.getInstance().setSmdtStatusBar(this, false);
+        CardManager.getInstance().getThread().onResume();
+        AdvertManager.getInstance().updateAdvertise();
+        initWithConfig();
+        WatchDogManager.getInstance().startANRWatchDog();
+        ServerManager.getInstance().startHeartBeat();
+        if (presenter != null) {
+            ServerManager.getInstance().setListener(presenter.taskListener);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("Activity:","onResume");
+        advertiseFlag = true;
+        sendAdvertiseDelaySignal();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.e("Activity:","onPause");
+        advertiseFlag = false;
+        asyncHandler.removeCallbacks(advertiseRunnable);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.e("Activity:","onStop");
+//        CardManager.getInstance().closeReadCard();
+        CardManager.getInstance().getThread().onPause();
+        ServerManager.getInstance().stopHeartBeat();
+        ServerManager.getInstance().setListener(null);
+        WatchDogManager.getInstance().stopANRWatchDog();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e("Activity:","onDestroy");
+        if (presenter != null) {
+            presenter.doDestroy();
+            presenter = null;
+        }
+        if (updatePresenter != null) {
+            updatePresenter.doDestroy();
+            updatePresenter = null;
+        }
+        tvCamera.setDrawingCacheEnabled(false);
+        CameraManager.getInstance().closeCamera();
+        ServerManager.getInstance().stopServer();
+        asyncHandler.removeCallbacks(advertiseRunnable);
+        GpioManager.getInstance().closeLed();
+        unregisterReceiver(timeReceiver);
+        cameraListener=null;
+    }
+
+    protected void initData() {
+        presenter = new VerifyPresenter(this, config);
+        updatePresenter = new UpdatePresenter(this);
+        advertiseDelay.set(config.getAdvertiseDelayTime());
+        handlerThread = new HandlerThread("advertise_thread");
+        handlerThread.start();
+        asyncHandler = new Handler(handlerThread.getLooper());
+    }
+
+    protected void initView() {
+        etPwd.setHint(ServerManager.getInstance().getHost());
+        tvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
+        rsvRect.bringToFront();
+    }
+
+    private void initWithConfig() {
+        advertiseDialog = AdvertiseDialogFragment.newInstance(new AdvertiseDialogFragment.OnViewClickListener() {
+            @Override
+            public void onClick(String position) {
+                tvTitle.setText(position);
+                presenter.setWay(position);
+                controlAdvertDialog(false);
+                sendAdvertiseDelaySignal();
+            }
+
+            @Override
+            public void onFinish() {
+                first=true;
+                CameraManager.getInstance().removelisnter();
+                GpioManager.getInstance().openCameraGpio();
+                startActivity(new Intent(VerifyActivity.this, SettingActivity2.class));
+                finish();
+            }
+        });
+    }
+
+    private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+                tvCamera.getViewTreeObserver().removeOnGlobalLayoutListener(globalListener);
+                controlAdvertDialog(true);
+                if(GpioManager.getInstance().smdtReadGpioValue()!=1){
+                    GpioManager.getInstance().openCameraGpio();
+                }
+            CameraManager.getInstance().openCamera(tvCamera, cameraListener);
+        }
+    };
+
+    private CameraManager.OnCameraOpenListener cameraListener = new CameraManager.OnCameraOpenListener() {
+        @Override
+        public void onCameraOpen(Camera.Size previewSize, String message) {
+            if (previewSize == null) {
+                ToastManager.toast("摄像头打开失败");
+                controlAdvertDialog(true);
+                controlAdvertDialog(false);
+            } else {
+                int rootWidth = flCameraRoot.getWidth();
+                int rootHeight = flCameraRoot.getHeight() * previewSize.width / previewSize.height;
+                resetLayoutParams(tvCamera, rootWidth, rootHeight);
+                resetLayoutParams(rsvRect, rootWidth, rootHeight);
+                rsvRect.setRootSize(rootWidth, rootHeight);
+                rsvRect.setZoomRate((float) rootWidth / FaceManager.zoomWidth);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    try {
+                        if (advertiseDialog != null&&!first) {
+                            advertiseDialog.dismiss();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, 500);
+            }
+            if (presenter != null && presenter.isOnTask()) {
+                presenter.handleTask();
+            }
+        }
+
+        @Override
+        public void onCameraError() {
+            runOnUiThread(() -> {
+                try {
+                    while (advertiseLock.isLocked()) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    advertiseLock.lock();
+                    Log.e("asd", "开始修复摄像头卡顿");
+                    CameraManager.getInstance().closeCamera();
+                    GpioManager.getInstance().closeCameraGpio();
+                    Thread.sleep(800);
+                    GpioManager.getInstance().openCameraGpio();
+                    CameraManager.getInstance().openCamera(tvCamera, cameraListener);
+                    Log.e("asd", "结束修复摄像头卡顿");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    advertiseLock.unlock();
+                }
+            });
+        }
+    };
+
+    public void controlAdvertDialog(boolean show) {
+//        runOnUiThread(() -> {
+        App.getInstance().getThreadExecutor().execute(() -> {
+            if (show) {
+                try {
+                    if (advertiseLock.isLocked()) {
+                        return;
+                    }
+                    advertiseLock.lock();
+                    if (!advertiseDialog.isAdded()) {
+                        advertiseDialog.show(getSupportFragmentManager(), "ad");
+                    }
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    CameraManager.getInstance().closeCamera();
+                    GpioManager.getInstance().closeCameraGpio();
+                    Thread.sleep(800);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    advertiseLock.unlock();
+                }
+            } else {
+                if (System.currentTimeMillis() - cameraOpenTime < 3000) return;
+                try {
+                    first=false;
+                    cameraOpenTime = System.currentTimeMillis();
+                    while (advertiseLock.isLocked()) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    advertiseLock.lock();
+                    GpioManager.getInstance().openCameraGpio();
+                    runOnUiThread(() -> {
+                        CameraManager.getInstance().openCamera(tvCamera, cameraListener);
+                        cameraOpenTime = System.currentTimeMillis();
+                    });
+                    Thread.sleep(800);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    advertiseLock.unlock();
+                }
+            }
+        });
+    }
+
+    public void onCardEvent(CardManager.CardStatus cardStatus, IDCardRecord idCardRecord) {
+        runOnUiThread(() -> {
+            switch (cardStatus) {
+                case NoCard:
+                    advertiseDelay.set(config.getAdvertiseDelayTime());
+                    advertiseFlag = true;
+                    tvPass.setText("请放身份证");
+                    tvPass.setVisibility(View.VISIBLE);
+                    rvResult.setVisibility(View.GONE);
+                    ivFaceBox.setVisibility(View.INVISIBLE);
+                    tvLivenessHint.setVisibility(View.INVISIBLE);
+                    rlGatherFinger.setVisibility(View.GONE);
+                    ivGatherFinger.setImageBitmap(null);
+                    tvGatherFingerHint.setText("指纹采集");
+                    tvUploadHint.setVisibility(View.INVISIBLE);
+                    rsvRect.clearDraw();
+                    sendAdvertiseDelaySignal();
+                    break;
+                case FindCard:
+                    advertiseFlag = false;
+                    rsvRect.clearDraw();
+                    asyncHandler.removeCallbacks(advertiseRunnable);
+                    if (advertiseDialog.isVisible()) {
+                        controlAdvertDialog(false);
+                    }
+                    break;
+                case ReadCard:
+                    if (idCardRecord != null) {
+                        tvPass.setVisibility(View.GONE);
+                        rvResult.clear();
+                        rvResult.showCardImage(idCardRecord.getCardBitmap());
+                        rvResult.setVisibility(View.VISIBLE);
+                    }
+                    break;
+            }
+        });
+    }
+
+    public void overdue() {
+        runOnUiThread(() -> {
+            rvResult.setResultMessage("已过期");
+            rvResult.setFingerMode(false);
+            rvResult.setVisibility(View.VISIBLE);
+        });
+    }
+
+    public void outWhiteList() {
+        runOnUiThread(() -> {
+            rvResult.setResultMessage("不在名单内");
+            rvResult.setFingerMode(false);
+            rvResult.setVisibility(View.VISIBLE);
+        });
+    }
+
+    public void verifyMode(boolean verifyMode) {
+        runOnUiThread(() -> {
+            rvResult.setFingerMode(!verifyMode);
+            if (verifyMode) {
+                if (config.getLivenessFlag()) {
+                    tvLivenessHint.setText("请缓慢眨眼");
+                    tvLivenessHint.setVisibility(View.VISIBLE);
+                    ivFaceBox.setVisibility(View.VISIBLE);
+                }
+            } else {
+                tvLivenessHint.setVisibility(View.INVISIBLE);
+                ivFaceBox.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    public void drawFaceRect(MXFaceInfoEx[] faceInfo, int faceNum) {
+        rsvRect.drawRect(faceInfo, faceNum);
+    }
+
+    public void actionLiveHint(String message) {
+        runOnUiThread(() -> {
+            tvLivenessHint.setText(message);
+        });
+    }
+
+    public void faceVerifyResult(boolean result, Bitmap bitmap, String message) {
+        runOnUiThread(() -> {
+            rsvRect.clearDraw();
+            rvResult.setFaceResult(result);
+            rvResult.showCameraImage(bitmap);
+            rvResult.setResultMessage(tvTitle.getText().toString().trim()+message);
+        });
+    }
+
+    public void fingerVerifyResult(boolean result, String message) {
+        runOnUiThread(() -> {
+            rvResult.setFingerResult(result);
+            rvResult.setResultMessage(message);
+        });
+    }
+
+    public void undocumentedResult(int status) {
+        runOnUiThread(() -> {
+            if (status == 0) {
+                rsvRect.clearDraw();
+                tvLivenessHint.setVisibility(View.INVISIBLE);
+                ivFaceBox.setVisibility(View.INVISIBLE);
+            } else if (status == 1) {
+                tvPass.setVisibility(View.INVISIBLE);
+                if (config.getLivenessFlag()) {
+                    tvLivenessHint.setText("请缓慢眨眼");
+                    tvLivenessHint.setVisibility(View.VISIBLE);
+                    ivFaceBox.setVisibility(View.VISIBLE);
+                }
+            } else if (status == 2) {
+                tvPass.setVisibility(View.VISIBLE);
+                tvUploadHint.setVisibility(View.INVISIBLE);
+                advertiseFlag = true;
+                sendAdvertiseDelaySignal();
+            }
+        });
+    }
+
+    public void gatherFingerResult(boolean open, Bitmap finger, String message) {
+        runOnUiThread(() -> {
+            if (open) {
+                if (finger == null) {
+                    showGif(R.raw.put_finger, ivGatherFinger);
+                } else {
+                    ivGatherFinger.setImageBitmap(finger);
+                }
+                tvGatherFingerHint.setText(message);
+                rlGatherFinger.setVisibility(View.VISIBLE);
+            } else {
+                rlGatherFinger.setVisibility(View.GONE);
+                ivGatherFinger.setImageResource(R.drawable.finger_null);
+                tvGatherFingerHint.setText("指纹采集");
+            }
+        });
+    }
+
+    public void uploadStatus(String message) {
+        runOnUiThread(() -> {
+            tvLivenessHint.setVisibility(View.INVISIBLE);
+            ivFaceBox.setVisibility(View.INVISIBLE);
+            tvUploadHint.setText(message);
+            tvUploadHint.setVisibility(View.VISIBLE);
+        });
+    }
+
+    public void onTaskResult(Task task, int status) {
+        runOnUiThread(() -> {
+            if (status == 0) {
+                advertiseFlag = false;
+                asyncHandler.removeCallbacks(advertiseRunnable);
+                tvPass.setVisibility(View.INVISIBLE);
+                if (CameraManager.getInstance().getCamera() == null) {
+                    controlAdvertDialog(false);
+                } else {
+                    if (presenter != null) {
+                        presenter.handleTask();
+                    }
+                }
+            } else if (status == 1) {
+                rsvRect.clearDraw();
+                rvResult.setVisibility(View.INVISIBLE);
+                tvLivenessHint.setVisibility(View.INVISIBLE);
+                ivFaceBox.setVisibility(View.INVISIBLE);
+                tvPass.setVisibility(View.VISIBLE);
+                tvUploadHint.setVisibility(View.INVISIBLE);
+                advertiseFlag = true;
+                sendAdvertiseDelaySignal();
+                if (presenter != null) {
+                    presenter.onTaskDone();
+                }
+            } else if (status == 2) {
+                if (TextUtils.equals(task.getTasktype(), "1001")) {
+                } else if (TextUtils.equals(task.getTasktype(), "1002")) {
+                    rvResult.clear();
+                    rvResult.setFingerMode(false);
+                    rvResult.showCardImage(task.getCardBitmap());
+                    rvResult.setVisibility(View.VISIBLE);
+                    if (config.getLivenessFlag()) {
+                        tvLivenessHint.setText("请缓慢眨眼");
+                        tvLivenessHint.setVisibility(View.VISIBLE);
+                        ivFaceBox.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+    }
+
+    private void sendAdvertiseDelaySignal() {
+        advertiseDelay.set(config.getAdvertiseDelayTime());
+        asyncHandler.post(advertiseRunnable);
+    }
+
+    private Runnable advertiseRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(1000);
+                advertiseDelay.decrementAndGet();
+                if (!advertiseFlag || advertiseDelay.get() > 0) {
+                    asyncHandler.post(advertiseRunnable);
+                    return;
+                }
+                if (!advertiseDialog.isVisible()) {
+                    controlAdvertDialog(true);
+                } else {
+                    advertiseDelay.set(config.getAdvertiseDelayTime());
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
+    private void initDialog() {
+        waitDialog = new MaterialDialog.Builder(this)
+                .progress(true, 100)
+                .content("请稍后")
+                .cancelable(false)
+                .autoDismiss(false)
+                .build();
+        resultDialog = new MaterialDialog.Builder(this)
+                .content("")
+                .positiveText("确认")
+                .build();
+    }
+
+    public void showWaitDialog(String message) {
+        runOnUiThread(() -> {
+            waitDialog.getContentView().setText(message);
+            waitDialog.show();
+        });
+    }
+
+    public void dismissWaitDialog() {
+        runOnUiThread(() -> {
+            if (waitDialog.isShowing()) {
+                waitDialog.dismiss();
+            }
+        });
+    }
+
+    public void showResultDialog(String message) {
+        runOnUiThread(() -> {
+            resultDialog.getContentView().setText(message);
+            resultDialog.show();
+        });
+    }
+
+    public void dismissResultDialog() {
+        runOnUiThread(() -> {
+            if (resultDialog.isShowing()) {
+                resultDialog.dismiss();
+            }
+        });
+    }
+
+    private void resetLayoutParams(View view, int fixWidth, int fixHeight) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        layoutParams.width = fixWidth;
+        layoutParams.height = fixHeight;
+        view.setLayoutParams(layoutParams);
+    }
+
+
+
+    @OnClick(R.id.btn_cancel)
+    void onCancel() {
+        hideInputMethod();
+        etPwd.setText(null);
+        etPwd.setVisibility(View.GONE);
+        advertiseFlag = true;
+        sendAdvertiseDelaySignal();
+        btnCancel.setVisibility(View.GONE);
+        btnConfirm.setVisibility(View.GONE);
+        tvWelMsg.setVisibility(View.VISIBLE);
+    }
+
+    @OnClick(R.id.btn_confirm)
+    void onConfirm() {
+        hideInputMethod();
+        String pwd = etPwd.getText().toString();
+        if (TextUtils.equals(pwd, config.getPassword())) {
+            etPwd.setText(null);
+            etPwd.setVisibility(View.GONE);
+            advertiseFlag = true;
+            btnCancel.setVisibility(View.GONE);
+            btnConfirm.setVisibility(View.GONE);
+            tvWelMsg.setVisibility(View.VISIBLE);
+        } else {
+            Toast.makeText(this, "密码错误", Toast.LENGTH_SHORT).show();
+            etPwd.setText(null);
+        }
+    }
+
+
+
+
+    @OnClick(R.id.back_title)
+    void onBack(){
+//        controlAdvertDialog(true);
+        SoundManager.getInstance().stopPlay();
+        RecordManager.getInstance().cancelRequest();
+        FingerManager.getInstance().stopVerifyFinger();
+        FingerManager.getInstance().stopGatherFinger();
+        FaceManager.getInstance().stopLoop();
+        GpioManager.getInstance().closeLed();
+        CameraManager.getInstance().closeCamera();
+        GpioManager.getInstance().closeCameraGpio();
+        if (!advertiseDialog.isAdded()) {
+            advertiseDialog.show(getSupportFragmentManager(), "ad");
+        }
+    }
+
+    /**
+     * 日期时间
+     */
+    private void initTimeReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_TIME_TICK);
+        registerReceiver(timeReceiver, filter);
+        onTimeEvent();
+    }
+
+    private BroadcastReceiver timeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (Intent.ACTION_TIME_TICK.equals(intent.getAction())) {
+                onTimeEvent();//每一分钟更新时间
+            }
+        }
+    };
+
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onWeatherChanged(LocalWeatherLive localWeatherLive) {
+//        tvWeather.setText(String.format("%s %s℃", localWeatherLive.getWeather(), localWeatherLive.getTemperature()));
+//    }
+
+    /**
+     * 处理 时间变化 事件， 实时更新时间
+     */
+    private void onTimeEvent() {
+        String date = DateUtil.dateFormat.format(new Date());
+        String time = DateUtil.timeFormat.format(new Date());
+        tvTime.setText(time);
+        tvDate.setText(date);
+    }
+
+    private void showGif(int rawId, ImageView view) {
+        GlideApp.with(this).load(rawId).listener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                return false;
+            }
+        })
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(view);
+    }
+
+}

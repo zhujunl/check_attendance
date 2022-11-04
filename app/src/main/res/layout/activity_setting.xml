@@ -1,0 +1,757 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical|start"
+        android:paddingStart="50dp"
+        android:text="设置"
+        android:textSize="40sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_weight="5"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="版本号"
+                    android:layout_weight="3"/>
+
+                <View style="@style/VerticalLine" />
+
+                <TextView
+                    android:id="@+id/tv_version"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:textColor="@color/dark"
+                    android:layout_margin="1dp"
+                    android:textSize="20sp" />
+
+                <View style="@style/VerticalLine" />
+
+                <Button
+                    android:id="@+id/btn_update"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_btn_bg"
+                    android:gravity="center"
+                    android:layout_margin="1dp"
+                    android:text="检查更新"
+                    android:textColor="@color/orange"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="版本更新URL" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_update_url"
+                    style="@style/SettingEditItem" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="日志上传URL" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_upload_url"
+                    style="@style/SettingEditItem" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="广告更新URL" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_advertisement_url"
+                    style="@style/SettingEditItem" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="设备序列号" />
+
+                <View style="@style/VerticalLine" />
+
+                <TextView
+                    android:id="@+id/tv_device_serial"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:layout_margin="1dp"
+                    android:textColor="@color/dark"
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="单位编码" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_client_id"
+                    style="@style/SettingEditItem" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="验证模式" />
+
+                <View style="@style/VerticalLine" />
+
+                <Spinner
+                    android:id="@+id/s_verify_mode"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="网络开关" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_net"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_net_on"
+                        style="@style/SettingRadioItem"
+                        android:text="联网" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_net_off"
+                        style="@style/SettingRadioItem"
+                        android:text="单机" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="数据加密" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_encrypt"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_encrypt_on"
+                        style="@style/SettingRadioItem"
+                        android:text="开启" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_encrypt_off"
+                        style="@style/SettingRadioItem"
+                        android:text="关闭" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="上传日志配置" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_result"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_result_on"
+                        style="@style/SettingRadioItem"
+                        android:text="成功 + 失败" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_result_off"
+                        style="@style/SettingRadioItem"
+                        android:text="仅限成功" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="日志续传" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_sequel"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_sequel_on"
+                        style="@style/SettingRadioItem"
+                        android:text="开启" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_sequel_off"
+                        style="@style/SettingRadioItem"
+                        android:text="关闭" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="补全指纹信息" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_gather"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_gather_on_one"
+                        style="@style/SettingRadioItem"
+                        android:text="采集1" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_gather_on_two"
+                        style="@style/SettingRadioItem"
+                        android:text="采集2" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_gather_off"
+                        style="@style/SettingRadioItem"
+                        android:text="不采集" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="本地日志存储" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_save_local"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_save_local_on"
+                        style="@style/SettingRadioItem"
+                        android:text="开启" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_save_local_off"
+                        style="@style/SettingRadioItem"
+                        android:text="关闭" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="无证入住" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_document"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_document_on"
+                        style="@style/SettingRadioItem"
+                        android:text="开启" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_document_off"
+                        style="@style/SettingRadioItem"
+                        android:text="关闭" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="眨眼活体识别" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_liveness"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_liveness_on"
+                        style="@style/SettingRadioItem"
+                        android:text="开启" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_liveness_off"
+                        style="@style/SettingRadioItem"
+                        android:text="关闭" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="查询记录" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_query"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_query_on"
+                        style="@style/SettingRadioItem"
+                        android:text="允许" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_query_off"
+                        style="@style/SettingRadioItem"
+                        android:text="不允许" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="广告开关" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_advertise"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_advertise_on"
+                        style="@style/SettingRadioItem"
+                        android:text="开启" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_advertise_off"
+                        style="@style/SettingRadioItem"
+                        android:text="关闭" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="广告来源" />
+
+                <View style="@style/VerticalLine" />
+
+                <RadioGroup
+                    android:id="@+id/rg_advertise_mode"
+                    style="@style/SettingRadioGroup">
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_advertise_local"
+                        style="@style/SettingRadioItem"
+                        android:text="本地" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_advertise_net"
+                        style="@style/SettingRadioItem"
+                        android:text="网络" />
+
+                    <View style="@style/SpaceBody" />
+
+                    <RadioButton
+                        android:id="@+id/rb_advertise_net_and_local"
+                        style="@style/SettingRadioItem"
+                        android:text="本地 + 网络" />
+
+                    <View style="@style/SpaceBody" />
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="比对阈值" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_verify_score"
+                    style="@style/SettingEditItem"
+                    android:inputType="numberDecimal" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="质量阈值" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_quality_score"
+                    style="@style/SettingEditItem"
+                    android:inputType="number" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="活体质量过滤阈值" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_liveness_quality_score"
+                    style="@style/SettingEditItem"
+                    android:inputType="numberDecimal" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="定时任务(续传、清理、广告、版本)"
+                    android:layout_weight="3"/>
+
+                <View style="@style/VerticalLine" />
+
+                <TextView
+                    android:id="@+id/tv_select_time"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:hint="点击选择时间"
+                    android:textSize="20sp" />
+
+                <View style="@style/VerticalLine" />
+
+                <Button
+                    android:id="@+id/btn_clear_now"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/white_btn_bg"
+                    android:gravity="center"
+                    android:text="立即执行"
+                    android:textColor="@color/orange"
+                    android:textSize="20sp" />
+
+                <View style="@style/VerticalLine" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="比对数目 （未上传数目 / 总数）" />
+
+                <View style="@style/VerticalLine" />
+
+                <TextView
+                    android:id="@+id/tv_result_count"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:hint="正在计算..."
+                    android:textSize="20sp" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="监控间隔" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_monitor_interval"
+                    style="@style/SettingEditItem"
+                    android:inputType="numberDecimal" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="提示文字" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_title_str"
+                    style="@style/SettingEditItem" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="机构名称" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_org_name"
+                    style="@style/SettingEditItem" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView
+                    style="@style/SettingName"
+                    android:text="密码" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_pwd"
+                    style="@style/SettingEditItem"
+                    android:digits="0123456789"
+                    android:inputType="number"
+                    android:maxLength="6" />
+
+            </LinearLayout>
+
+            <LinearLayout style="@style/SettingItem">
+
+                <TextView style="@style/SettingName"
+                    android:text="广告显示延迟（秒）" />
+
+                <View style="@style/VerticalLine" />
+
+                <EditText
+                    android:id="@+id/et_advertise_delay_time"
+                   style="@style/SettingEditItem"
+                    android:digits="0123456789"
+                    android:inputType="number" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="5sp"
+        android:layout_marginRight="40dp"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btn_white_manage"
+            style="@style/setting_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:text="白名单配置" />
+
+        <Button
+            android:id="@+id/btn_black_manage"
+            style="@style/setting_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:text="黑名单配置"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/btn_local_feature_manage"
+            style="@style/setting_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="本地特征库"
+            android:visibility="invisible" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="40dp"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btn_save_config"
+            style="@style/stroke_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:text="保存设置" />
+
+        <Button
+            android:id="@+id/btn_cancel_config"
+            style="@style/stroke_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="5dp"
+            android:layout_weight="1"
+            android:text="返回" />
+
+        <Button
+            android:id="@+id/btn_exit"
+            style="@style/stroke_button"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="退出程序"
+            android:textColor="@color/red" />
+
+    </LinearLayout>
+
+</LinearLayout>

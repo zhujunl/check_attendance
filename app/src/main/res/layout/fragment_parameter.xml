@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="设备序列号" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <TextView
+                        android:id="@+id/tv_device_serial"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@color/white"
+                        android:gravity="center"
+                        android:singleLine="true"
+                        android:layout_margin="1dp"
+                        android:textColor="@color/dark"
+                        android:textSize="20sp" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="单位编码" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <EditText
+                        android:id="@+id/et_client_id"
+                        style="@style/SettingEditItem" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="验证模式" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <Spinner
+                        android:id="@+id/s_verify_mode"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="1" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="补全指纹信息" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <RadioGroup
+                        android:id="@+id/rg_gather"
+                        style="@style/SettingRadioGroup">
+
+                        <View style="@style/SpaceBody" />
+
+                        <RadioButton
+                            android:id="@+id/rb_gather_on_one"
+                            style="@style/SettingRadioItem"
+                            android:text="采集1" />
+
+                        <View style="@style/SpaceBody" />
+
+                        <RadioButton
+                            android:id="@+id/rb_gather_on_two"
+                            style="@style/SettingRadioItem"
+                            android:text="采集2" />
+
+                        <View style="@style/SpaceBody" />
+
+                        <RadioButton
+                            android:id="@+id/rb_gather_off"
+                            style="@style/SettingRadioItem"
+                            android:text="不采集" />
+
+                        <View style="@style/SpaceBody" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="眨眼活体识别" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <RadioGroup
+                        android:id="@+id/rg_liveness"
+                        style="@style/SettingRadioGroup">
+
+                        <View style="@style/SpaceBody" />
+
+                        <RadioButton
+                            android:id="@+id/rb_liveness_on"
+                            style="@style/SettingRadioItem"
+                            android:text="开启" />
+
+                        <View style="@style/SpaceBody" />
+
+                        <RadioButton
+                            android:id="@+id/rb_liveness_off"
+                            style="@style/SettingRadioItem"
+                            android:text="关闭" />
+
+                        <View style="@style/SpaceBody" />
+
+                    </RadioGroup>
+
+                </LinearLayout>
+
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="比对阈值" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <EditText
+                        android:id="@+id/et_verify_score"
+                        style="@style/SettingEditItem"
+                        android:inputType="numberDecimal" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="质量阈值" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <EditText
+                        android:id="@+id/et_quality_score"
+                        style="@style/SettingEditItem"
+                        android:inputType="number" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="活体质量过滤阈值" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <EditText
+                        android:id="@+id/et_liveness_quality_score"
+                        style="@style/SettingEditItem"
+                        android:inputType="numberDecimal" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="监控间隔" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <EditText
+                        android:id="@+id/et_monitor_interval"
+                        style="@style/SettingEditItem"
+                        android:inputType="numberDecimal" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="机构名称" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <EditText
+                        android:id="@+id/et_org_name"
+                        style="@style/SettingEditItem" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView
+                        style="@style/SettingName"
+                        android:text="密码" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <EditText
+                        android:id="@+id/et_pwd"
+                        style="@style/SettingEditItem"
+                        android:digits="0123456789"
+                        android:inputType="number"
+                        android:maxLength="6" />
+
+                </LinearLayout>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <TextView style="@style/SettingName"
+                        android:text="主页显示延迟（秒）" />
+
+                    <View style="@style/VerticalLine" />
+
+                    <EditText
+                        android:id="@+id/et_advertise_delay_time"
+                        style="@style/SettingEditItem"
+                        android:digits="0123456789"
+                        android:inputType="number" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+    </ScrollView>
+    <Button
+        android:id="@+id/save"
+        android:text="保存参数"
+        style="@style/stroke_button"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:textSize="30sp"
+        android:textColor="@color/black"
+        android:layout_width="400dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+</LinearLayout>

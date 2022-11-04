@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.miaxis.faceid_cw",
+  "variantName": "processDebugResources",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "versionCode": 12,
+      "versionName": "1.1.4_Dahe_New_Debug",
+      "outputFile": "app-debug.apk"
+    }
+  ]
+}

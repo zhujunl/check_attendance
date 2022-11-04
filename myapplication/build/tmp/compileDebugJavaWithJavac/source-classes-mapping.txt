@@ -1,0 +1,24 @@
+qwe/com/guoguang/jni/JniCall.java
+ com.guoguang.jni.JniCall
+qwe/org/zz/idcard_hid_driver/zzJavaBase64.java
+ org.zz.idcard_hid_driver.zzJavaBase64
+qwe/org/zz/idcard_hid_driver/IcCardDriver.java
+ org.zz.idcard_hid_driver.IcCardDriver
+qwe/org/zz/idcard_hid_driver/MXDataCode.java
+ org.zz.idcard_hid_driver.MXDataCode
+qwe/org/zz/idcard_hid_driver/BMP.java
+ org.zz.idcard_hid_driver.BMP
+qwe/org/zz/idcard_hid_driver/UsbBase.java
+ org.zz.idcard_hid_driver.UsbBase
+ org.zz.idcard_hid_driver.UsbBase$1
+ org.zz.idcard_hid_driver.UsbBase$2
+com/example/myapplication/BuildConfig.java
+ com.example.myapplication.BuildConfig
+qwe/org/zz/idcard_hid_driver/ConStant.java
+ org.zz.idcard_hid_driver.ConStant
+qwe/org/zz/idcard_hid_driver/IdCardDriver.java
+ org.zz.idcard_hid_driver.IdCardDriver
+qwe/org/zz/idcard_hid_driver/zzStringTrans.java
+ org.zz.idcard_hid_driver.zzStringTrans
+qwe/com/example/read/BuildConfig.java
+ com.example.read.BuildConfig

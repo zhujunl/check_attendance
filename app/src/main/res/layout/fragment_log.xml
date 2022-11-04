@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp">
+        <Button
+            android:id="@+id/check_log"
+            android:text="日志查看"
+            style="@style/setbg"
+            android:layout_gravity="center"
+            android:layout_width="200dp"
+            android:layout_height="70dp" />
+
+        <TextView
+            android:id="@+id/check_start"
+            android:text="1996/2/16"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="~"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/check_end"
+            android:text="1996/2/16"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp">
+        <Button
+            android:id="@+id/export_log"
+            android:text="日志导出"
+            style="@style/setbg"
+            android:layout_gravity="center"
+            android:layout_width="200dp"
+            android:layout_height="70dp"  />
+
+        <TextView
+            android:id="@+id/export_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp"
+            android:gravity="center"
+            android:text="1996/2/16"
+            android:textSize="30sp" />
+
+        <TextView
+            android:text="~"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/export_end"
+            android:text="1996/2/16"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:layout_marginLeft="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/log_clear"
+        android:text="日志清除"
+        style="@style/setbg"
+        android:layout_width="200dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="50dp"/>
+</LinearLayout>
